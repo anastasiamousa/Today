@@ -21,22 +21,19 @@ class ReminderStore {
         let status = EKEventStore.authorizationStatus(for: .reminder)
         
         switch status {
-            
-        case .notDetermined:
-            let accessGranted = try await ekStore.requestAccess(to: .reminder)
-            guard accessGranted
-            else {
+            case .authorized:
+                return
+            case .restricted:
+                throw TodayError.accessRestricted
+            case .notDetermined:
+                let accessGranted = try await ekStore.requestAccess(to: .reminder)
+                guard accessGranted else {
+                    throw TodayError.accessDenied
+                }
+            case .denied:
                 throw TodayError.accessDenied
-            }
-        case .restricted:
-            return TodayError.accessRestricted
-        case .denied:
-            return TodayError.accessDenied
-        case .authorized:
-            return
-        @unknown default:
-            throw TodayError.unknown
-            
+            @unknown default:
+                throw TodayError.unknown
         }
     }
     
@@ -47,7 +44,7 @@ class ReminderStore {
         }
         let predicate = ekStore.predicateForReminders(in: nil)
         let ekReminders = try await ekStore.fetchReminders(matching: predicate)
-        let reminders = [Reminder] = try ekReminders.compactMap { ekReminder in
+        let reminders: [Reminder] = try ekReminders.compactMap { ekReminder in
             do {
                 return try Reminder(with: ekReminder)
             } catch TodayError.reminderHasNoDueDate {

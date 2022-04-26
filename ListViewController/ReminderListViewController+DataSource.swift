@@ -3,6 +3,7 @@ See LICENSE folder for this sample’s licensing information.
 */
 
 import UIKit
+import EventKit
 
 extension ReminderListViewController {
     typealias DataSource = UICollectionViewDiffableDataSource<Int, Reminder.ID>
@@ -14,6 +15,8 @@ extension ReminderListViewController {
     var reminderNotCompletedValue: String {
         NSLocalizedString("Not completed", comment: "Reminder not completed value")
     }
+    
+    private var reminderStore: ReminderStore { ReminderStore.shared }
     
     func updateSnapshot(reloading idsThatChanged: [Reminder.ID] = []) {
         let ids = idsThatChanged.filter{ id in filteredReminders.contains(where: {$0.id == id
@@ -73,6 +76,30 @@ extension ReminderListViewController {
         button.id = reminder.id
         button.setImage(image, for: .normal)
         return UICellAccessory.CustomViewConfiguration(customView: button, placement: .leading(displayed: .always))
+    }
+    
+    func prepareReminderStore() {
+        Task {
+            do {
+                try await reminderStore.requestAccess()
+                reminders = try await reminderStore.readAll()
+                NotificationCenter.default.addObserver(self, selector: #selector(eventStoreChanged(_:)), name: .EKEventStoreChanged, object: nil)
+            } catch TodayError.accessDenied, TodayError.accessRestricted {
+                #if DEBUG
+                reminders = Reminder.sampleData
+                #endif
+            } catch {
+                showError(error)
+            }
+            updateSnapshot()
+        }
+    }
+    
+    func reminderStoreChanged() {
+        Task {
+            reminders =  try await reminderStore.readAll()
+            updateSnapshot()
+        }
     }
     
     func add(_ reminder: Reminder) {
