@@ -13,6 +13,7 @@ enum ReminderListStyle: Int {
     case future
     case all
     
+    //3 types of reminders
     var name:String {
         switch self {
         case .today:
@@ -24,6 +25,7 @@ enum ReminderListStyle: Int {
         }
     }
     
+    //sorting the reminders
     func shouldInclude(date:Date)->Bool {
         let isInToday = Locale.current.calendar.isDateInToday(date)
         switch self {

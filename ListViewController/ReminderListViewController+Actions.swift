@@ -1,7 +1,3 @@
-/*
-See LICENSE folder for this sample’s licensing information.
-*/
-
 import UIKit
 
 extension ReminderListViewController {
@@ -15,6 +11,7 @@ extension ReminderListViewController {
         completeReminder(with: id)
     }
     
+    //pressing add button function
     @objc func didPressAddButton(_ sender: UIBarButtonItem) {
         let reminder = Reminder(title: "", dueDate: Date.now)
         let viewController = ReminderViewController(reminder: reminder) { [weak self] reminder in
@@ -30,6 +27,7 @@ extension ReminderListViewController {
         present(navigationController, animated: true)
     }
     
+    //pressing cancel button action
     @objc func didCancelAdd(_ sender: UIBarButtonItem) {
         dismiss(animated: true)
     }

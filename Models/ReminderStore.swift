@@ -20,6 +20,7 @@ class ReminderStore {
     func requestAccess() async throws {
         let status = EKEventStore.authorizationStatus(for: .reminder)
         
+        //permission cases
         switch status {
             case .authorized:
                 return
@@ -62,6 +63,7 @@ class ReminderStore {
         return reminders
     }
     
+    //removing a reminder
     func remove(with id: Reminder.ID) throws {
         guard isAvailable
         else {
@@ -71,6 +73,7 @@ class ReminderStore {
         try ekStore.remove(ekReminder, commit: true)
     }
     
+    //save a reminder
     @discardableResult
     func save(_ reminder: Reminder) throws -> Reminder.ID {
         guard isAvailable
@@ -87,5 +90,4 @@ class ReminderStore {
         try ekStore.save(ekReminder, commit: true)
         return ekReminder.calendarItemIdentifier
     }
-    
 }

@@ -4,6 +4,7 @@ See LICENSE folder for this sample’s licensing information.
 
 import Foundation
 
+//reminder struct
 struct Reminder: Equatable, Identifiable {
     var id: String = UUID().uuidString
     var title: String

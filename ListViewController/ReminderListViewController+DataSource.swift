@@ -18,6 +18,7 @@ extension ReminderListViewController {
     
     private var reminderStore: ReminderStore { ReminderStore.shared }
     
+    //update list and screen
     func updateSnapshot(reloading idsThatChanged: [Reminder.ID] = []) {
         let ids = idsThatChanged.filter{ id in filteredReminders.contains(where: {$0.id == id
             

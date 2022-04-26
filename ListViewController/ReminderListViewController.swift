@@ -1,10 +1,8 @@
-/*
-See LICENSE folder for this sample’s licensing information.
-*/
-
 import UIKit
 
 class ReminderListViewController: UICollectionViewController {
+    
+    //reminders' list
     var dataSource: DataSource!
     var reminders: [Reminder] = []
     var filteredReminders: [Reminder] {
@@ -45,6 +43,7 @@ class ReminderListViewController: UICollectionViewController {
             return self.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
         }
         
+        //add reminder button
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didPressAddButton(_:)))
         addButton.accessibilityLabel = NSLocalizedString("Add reminder", comment: "Add button accessibility label")
         navigationItem.rightBarButtonItem = addButton
@@ -87,6 +86,7 @@ class ReminderListViewController: UICollectionViewController {
         collectionView.backgroundView = backgroundView
     }
     
+    //show reminder's details
     func showDetail(for id: Reminder.ID) {
         let reminder = reminder(for: id)
         let viewController = ReminderViewController(reminder: reminder) { [weak self] reminder in
@@ -115,6 +115,7 @@ class ReminderListViewController: UICollectionViewController {
         return UICollectionViewCompositionalLayout.list(using: listConfiguration)
     }
     
+    //swipe action to delete a reminder from the list
     private func makeSwipeActions(for indexPath: IndexPath?) -> UISwipeActionsConfiguration? {
         guard let indexPath = indexPath, let id = dataSource.itemIdentifier(for: indexPath) else { return nil }
         let deleteActionTitle = NSLocalizedString("Delete", comment: "Delete action title")
